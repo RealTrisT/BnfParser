@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-struct BnfInterp{
+struct BnfCompile{
 
 	struct Element {
 		enum Type{
@@ -35,8 +35,6 @@ struct BnfInterp{
 		std::vector<Element> elements;
 		std::vector<unsigned> groups;
 	};
-
-	//-------------------
 
 public:
 	void ImplementNatives(Rule* rules, unsigned amount);

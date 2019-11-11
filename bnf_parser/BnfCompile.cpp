@@ -1,10 +1,10 @@
 #include "BnfCompile.h"
 #include "BaseBnfParse.h"
 
-BnfInterp::Element::Element(unsigned rule_index) : type(TYPE_RECURSE), rule_index(rule_index) {}
-BnfInterp::Element::Element(std::string literal_text) : type(TYPE_LITERAL), literal_text(literal_text) {}
-BnfInterp::Element::Element(bool(*native)(const char*, unsigned*)) : type(TYPE_NATIVE), native(native){}
-BnfInterp::Element::Element(const Element& o) : type(o.type) {
+BnfCompile::Element::Element(unsigned rule_index) : type(TYPE_RECURSE), rule_index(rule_index) {}
+BnfCompile::Element::Element(std::string literal_text) : type(TYPE_LITERAL), literal_text(literal_text) {}
+BnfCompile::Element::Element(bool(*native)(const char*, unsigned*)) : type(TYPE_NATIVE), native(native){}
+BnfCompile::Element::Element(const Element& o) : type(o.type) {
 	if (type == TYPE_LITERAL) {
 		new(&literal_text) std::string(o.literal_text);
 	} else {
@@ -16,21 +16,21 @@ BnfInterp::Element::Element(const Element& o) : type(o.type) {
 	}
 }
 
-BnfInterp::Element::~Element() {
+BnfCompile::Element::~Element() {
 	if (type == TYPE_LITERAL) {
 		literal_text.~basic_string();
 	}
 }
 
 
-void BnfInterp::ImplementNatives(Rule* rules, unsigned amount) {
+void BnfCompile::ImplementNatives(Rule* rules, unsigned amount) {
 	for (unsigned i = 0; i < amount; i++) {
 		this->rules.push_back(rules[i]);
 	}
 	this->rules_start_index = amount;
 }
 
-bool BnfInterp::CompileFromTokens(TokenGen::Token* tokens) {
+bool BnfCompile::CompileFromTokens(TokenGen::Token* tokens) {
 	if (!tokens)return false;
 	if (!this->ReadyRules(tokens)) {
 		rules.clear();
@@ -45,7 +45,7 @@ bool BnfInterp::CompileFromTokens(TokenGen::Token* tokens) {
 	return true;
 }
 
-bool BnfInterp::GetRuleIndex(const char* s, unsigned s_len, unsigned* o_index) {
+bool BnfCompile::GetRuleIndex(const char* s, unsigned s_len, unsigned* o_index) {
 	for (unsigned i = 0; i < rules.size(); i++) {						//for each rule in our rules vector
 		if (!rules[i].name.compare(0, s_len, s, s_len)) {				//we're gonna compare it to what we have
 			printf("true      - %.*s\n", s_len, s);
@@ -57,7 +57,7 @@ bool BnfInterp::GetRuleIndex(const char* s, unsigned s_len, unsigned* o_index) {
 	return false;
 }
 
-bool BnfInterp::CompileRule(TokenGen::Token* token, Rule& rule_expr) {
+bool BnfCompile::CompileRule(TokenGen::Token* token, Rule& rule_expr) {
 	if (
 		!token->child					//rule name
 		||
@@ -78,20 +78,19 @@ bool BnfInterp::CompileRule(TokenGen::Token* token, Rule& rule_expr) {
 			rule_expr.elements.push_back(Element(
 				rule_index
 			));
-		}
-		else if (curr_token->ID == (unsigned)TokenType::LITERAL) {
+		} else if (curr_token->ID == (unsigned)TokenType::LITERAL) {
 			rule_expr.elements.push_back(Element{
 				std::string(curr_token->begin + 1, curr_token->len - 2)
 			});
-		}
-		else if (curr_token->ID == (unsigned)TokenType::OR_OPERATOR) {
+		} else if (curr_token->ID == (unsigned)TokenType::OR_OPERATOR) {
 			rule_expr.groups.push_back((unsigned)rule_expr.elements.size());
 		}
 	}
+	rule_expr.groups.push_back((unsigned)rule_expr.elements.size());
 	return true;
 }
 
-bool BnfInterp::ReadyRules(TokenGen::Token* token_list) {
+bool BnfCompile::ReadyRules(TokenGen::Token* token_list) {
 	for (unsigned i = 0; token_list; token_list = token_list->next, i++) {		//now for each token (rule)
 		if (!token_list->child)
 			return false;
@@ -106,6 +105,6 @@ bool BnfInterp::ReadyRules(TokenGen::Token* token_list) {
 
 
 
-/*BnfInterp::Token* BnfInterp::Interpret(const char* s, bool recursion_fix) {
+/*BnfCompile::Token* BnfCompile::Interpret(const char* s, bool recursion_fix) {
 
 }*/

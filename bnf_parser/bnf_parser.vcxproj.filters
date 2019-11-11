@@ -35,5 +35,8 @@
     <ClInclude Include="BaseBnfParse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BnfInterp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -122,6 +122,7 @@
   <ItemGroup>
     <ClInclude Include="BaseBnfParse.h" />
     <ClInclude Include="BnfCompile.h" />
+    <ClInclude Include="BnfInterp.h" />
     <ClInclude Include="TokenGen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

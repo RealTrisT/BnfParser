@@ -21,8 +21,19 @@ int main() {
 	
 	BaseBnf a = BaseBnf();
 
-	const char* b = R"bnfsyntax(
-		<nibba> ::= "1" | "B" | "what u doin homi"
+	/*
+		<nibba> ::= <a-or-b> " homes, actually tried to pull one on " <a-or-b> " homes"
+		<a-or-b> ::= "a" | "b" | "A" | "B"
+	*/
+
+	const char* b = R"bnfsyntax(	
+		<rule-name>			::= <letter> <mid-rule-name> | <letter>
+		<mid-rule-name>		::= <rule-char> <mid-rule-name> | <rule-char>
+		<rule-char>			::= <letter> | <digit> | "-"
+
+		<letter>			::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+		<digit>				::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+		<symbol>			::= "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | ">" | "=" | "<" | "?" | "@" | "[" | "\" | "]" | "^" | "_" | "`" | "{" | "}" | "~"
 	)bnfsyntax";
 
 	TokenGen::Token* t = a.GetTokens(b, 0), *c = t;
@@ -47,20 +58,50 @@ int main() {
 	};
 
 	BnfCompile comp = BnfCompile();
-	comp.ImplementNatives(natives, 2);
-
-	if (!comp.CompileFromTokens(t)){
+	if (!comp.CompileFromTokens(t, natives, 2)){
 		puts("bygfak");
 	} else {
-		puts("compiled successfully\n");
+		printf("compiled successfully with %u rules\n", comp.rules.size());
+		for (auto& rule : comp.rules) {
+			printf("%s :: ", rule.name.c_str());
+			for (auto& element : rule.elements) {
+				printf("%s ", element.type == element.TYPE_LITERAL ? "LITERAL" : element.type == element.TYPE_NATIVE ? "NATIVE" : "RECURSE");
+			}
+			puts("");
+		}
+		puts("\n");
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	BnfInterp interp = BnfInterp();
-	auto tkn = interp.GetTokens("what u doin homi", &comp.rules);
+	auto tkn = interp.GetTokens("hi-this-is-rule-nameNr69", &comp.rules);
 
-	printf("%p [\"%.*s\", '%s']\n", tkn, tkn->len, tkn->begin, comp.rules[tkn->ID].name.c_str());
+
+	for (char c = getchar(); c != EOF; c = getchar()) {
+		switch (c) {
+			case 'w':
+				if (tkn->parent)tkn = tkn->parent;
+				break;
+			case 'a':
+				if (tkn->prev)tkn = tkn->prev;
+				break;
+			case 's':
+				if (tkn->child)tkn = tkn->child;
+				break;
+			case 'd':
+				if (tkn->next)tkn = tkn->next; 
+				break;
+			default:
+				continue;
+		}
+		printf("%p [\"%.*s\", '%s']\n", tkn, tkn->len, tkn->begin, comp.rules[tkn->ID].name.c_str());
+		printf("%p ", tkn->prev ? tkn->prev : 0);
+		printf("%p\n", tkn->next ? tkn->next : 0);
+		printf("%p ", tkn->parent ? tkn->parent : 0);
+		printf("%p\n", tkn->child ? tkn->child : 0);
+	}
+	
 
 
 

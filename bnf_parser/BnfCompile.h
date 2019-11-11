@@ -37,8 +37,7 @@ struct BnfCompile{
 	};
 
 public:
-	void ImplementNatives(Rule* rules, unsigned amount);
-	bool CompileFromTokens(TokenGen::Token* tokens);
+	bool CompileFromTokens(TokenGen::Token* tokens, Rule* rules = 0, unsigned amount = 0);
 	//TokenGen::Token* Interpret(const char* s, bool recursion_fix);
 
 private:

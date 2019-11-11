@@ -22,23 +22,18 @@ BnfCompile::Element::~Element() {
 	}
 }
 
-
-void BnfCompile::ImplementNatives(Rule* rules, unsigned amount) {
-	for (unsigned i = 0; i < amount; i++) {
-		this->rules.push_back(rules[i]);
-	}
-	this->rules_start_index = amount;
-}
-
-bool BnfCompile::CompileFromTokens(TokenGen::Token* tokens) {
+bool BnfCompile::CompileFromTokens(TokenGen::Token* tokens, Rule* natives, unsigned amount) {
 	if (!tokens)return false;
 	if (!this->ReadyRules(tokens)) {
-		rules.clear();
+		this->rules.clear();
 		return false;
 	}
-	for (unsigned i = this->rules_start_index; tokens; tokens = tokens->next, i++) {
+	for (unsigned i = 0; i < amount; i++) {
+		this->rules.push_back(natives[i]);
+	}
+	for (unsigned i = 0; tokens; tokens = tokens->next, i++) {
 		if (!CompileRule(tokens, this->rules[i])) {
-			rules.clear();
+			this->rules.clear();
 			return false;
 		}
 	}
@@ -48,7 +43,7 @@ bool BnfCompile::CompileFromTokens(TokenGen::Token* tokens) {
 bool BnfCompile::GetRuleIndex(const char* s, unsigned s_len, unsigned* o_index) {
 	for (unsigned i = 0; i < rules.size(); i++) {						//for each rule in our rules vector
 		if (!rules[i].name.compare(0, s_len, s, s_len)) {				//we're gonna compare it to what we have
-			printf("true      - %.*s\n", s_len, s);
+			//printf("true      - %.*s\n", s_len, s);
 			*o_index = i;
 			return true;
 		}

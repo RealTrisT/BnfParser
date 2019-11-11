@@ -10,7 +10,7 @@ struct BnfInterp : TokenGen{
 	Token* GetTokens(const char* s, void* data){
 		rules = (std::vector<BnfCompile::Rule>*)data;
 		const char* temp = 0;
-		return recurse(rules->size() - 1, 0, s, &temp);
+		return recurse(0, 0, s, &temp);
 	}
 
 

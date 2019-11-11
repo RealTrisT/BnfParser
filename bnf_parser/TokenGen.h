@@ -13,5 +13,5 @@ struct TokenGen {
 		}
 	};
 
-	virtual Token* GetTokens(const char*) = 0;
+	virtual Token* GetTokens(const char*, void*) = 0;
  };

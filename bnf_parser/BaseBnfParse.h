@@ -14,5 +14,5 @@ enum struct TokenType : unsigned {
 struct BaseBnf : TokenGen {
 	
 
-	Token* GetTokens(const char*);
+	Token* GetTokens(const char*, void*);
 };

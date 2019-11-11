@@ -18,10 +18,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BaseBnf.cpp">
+    <ClCompile Include="BnfCompile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BnfInterp.cpp">
+    <ClCompile Include="BaseBnfParse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,10 +29,10 @@
     <ClInclude Include="TokenGen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BaseBnf.h">
+    <ClInclude Include="BnfCompile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BnfInterp.h">
+    <ClInclude Include="BaseBnfParse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,4 +1,4 @@
-#include "BaseBnf.h"
+#include "BaseBnfParse.h"
 
 unsigned newline(const char* s) {
 	unsigned result = 0;
@@ -39,7 +39,7 @@ bool is_number(const char c) {
 	return (c >= '0' && c <= '9');
 }
 bool is_symbol(const char c) {
-	return c != '\'' && c != '"' && (c >= ' ' && c <= '/') || (c >= ':' && c <= '@') || (c >= '[' && c <= '`') || (c >= '{' && c <= '~');
+	return c != '\'' && c != '"' && ( c == '\t' || (c >= ' ' && c <= '/') || (c >= ':' && c <= '@') || (c >= '[' && c <= '`') || (c >= '{' && c <= '~') );
 }
 
 unsigned rule_name(const char* s) {
@@ -137,7 +137,7 @@ BaseBnf::Token* rule(const char** s_p, BaseBnf::Token* parent = 0, BaseBnf::Toke
 }
 
 
-BaseBnf::Token* BaseBnf::GetTokens(const char* s){
+BaseBnf::Token* BaseBnf::GetTokens(const char* s, void*){
 	const char* old_s = s;
 	Token* begin_token = new Token();
 	Token* current_rule = begin_token;

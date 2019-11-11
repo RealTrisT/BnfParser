@@ -21,12 +21,18 @@
     <ClCompile Include="BaseBnf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BnfInterp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TokenGen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BaseBnf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BnfInterp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

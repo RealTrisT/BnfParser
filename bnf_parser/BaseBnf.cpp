@@ -72,7 +72,7 @@ BaseBnf::Token* literal(const char** s_p, BaseBnf::Token* parent = 0, BaseBnf::T
 		0,
 		begin,
 		unsigned(s - begin),
-		(unsigned)BaseBnf::TokenType::LITERAL
+		(unsigned)TokenType::LITERAL
 	};
 }
 
@@ -92,14 +92,14 @@ BaseBnf::Token* rule_designator(const char** s_p, BaseBnf::Token* parent = 0, Ba
 		0, 
 		begin, 
 		unsigned(s - begin),
-		(unsigned)BaseBnf::TokenType::RULE_NAME
+		(unsigned)TokenType::RULE_NAME
 	};
 }
 
 BaseBnf::Token* rule(const char** s_p, BaseBnf::Token* parent = 0, BaseBnf::Token* prev = 0) {
 	const char* s = *s_p;
 	BaseBnf::Token* rule = new BaseBnf::Token{
-		0, prev, parent, 0, s, 0, (unsigned)BaseBnf::TokenType::RULE
+		0, prev, parent, 0, s, 0, (unsigned)TokenType::RULE
 	};
 
 	BaseBnf::Token* rule_element = rule->child = rule_designator(&s, rule, 0);		//we got the rule name
@@ -108,14 +108,14 @@ BaseBnf::Token* rule(const char** s_p, BaseBnf::Token* parent = 0, BaseBnf::Toke
 
 	if(!((*s++ == ':') && (*s++ == ':') && (*s++ == '='))) { rule->destroy(); return false; }
 	rule_element = rule_element->next = new BaseBnf::Token{
-		0, rule_element, rule, 0, s-3, 3, (unsigned)BaseBnf::TokenType::ASSIGNMENT_OPERATOR
+		0, rule_element, rule, 0, s-3, 3, (unsigned)TokenType::ASSIGNMENT_OPERATOR
 	};
 	s += possible_spaces(s);
 
-	while (true) {//missing literal
+	while (true) {
 		if (*s == '|') {
 			rule_element = rule_element->next = new BaseBnf::Token{
-				0, rule_element, rule, 0, s++, 1, (unsigned)BaseBnf::TokenType::OR_OPERATOR
+				0, rule_element, rule, 0, s++, 1, (unsigned)TokenType::OR_OPERATOR
 			};
 		}else if(BaseBnf::Token* next_rule = rule_designator(&s, rule, rule_element)){
 			rule_element = rule_element->next = next_rule;
@@ -131,7 +131,7 @@ BaseBnf::Token* rule(const char** s_p, BaseBnf::Token* parent = 0, BaseBnf::Toke
 		s += possible_spaces(s);
 	}
 	
-	rule->len = s - *s_p;
+	rule->len = unsigned(s - *s_p);
 	*s_p = s;
 	return rule;
 }
@@ -154,6 +154,4 @@ BaseBnf::Token* BaseBnf::GetTokens(const char* s){
 	current_rule = begin_token->next;
 	delete begin_token;
 	return current_rule;
-
-	//ashit;
 }

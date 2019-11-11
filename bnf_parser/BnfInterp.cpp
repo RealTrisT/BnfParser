@@ -1,4 +1,4 @@
-#include "BnfInterp.h";
+#include "BnfInterp.h"
 
 BnfInterp::Element::Element(unsigned rule_index) : type(TYPE_RECURSE), rule_index(rule_index) {}
 BnfInterp::Element::Element(std::string literal_text) : type(TYPE_LITERAL), literal_text(literal_text) {}

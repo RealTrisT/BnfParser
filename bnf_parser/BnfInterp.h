@@ -10,14 +10,18 @@ struct BnfInterp : TokenGen{
 	Token* GetTokens(const char* s, void* data){
 		rules = (std::vector<BnfCompile::Rule>*)data;
 		const char* temp = 0;
-		return recurse(0, 0, s, &temp);
+		Token* result = recurse(0, 0, s, &temp);
+		if (!result)return 0;
+		if (recursion_fix) { result->remove_recursive(); }
+		return result;
 	}
 
 
 	std::vector<BnfCompile::Rule>* rules;
+	bool recursion_fix = false;
 
 	Token* recurse(unsigned rule_index, Token* parent, const char* string, const char** end) {
-		Token* token = new Token{ 0, 0, parent, 0, string, 0, rule_index }, *start_token = token;
+		Token* token = new Token{ 0, 0, parent, 0, string, 0, rule_index };
 		Token* child = (Token*)((char*)token + offsetof(Token, child));								//child points to the child element of token, so ( &child->next == &token->child )
 		BnfCompile::Rule& rule = (*rules)[rule_index];
 		const char* location = string;
@@ -68,7 +72,10 @@ struct BnfInterp : TokenGen{
 			}
 		}
 		if (works) {
-			if (token->child)token->child->prev = 0;
+			if (token->child) {
+				token->child->prev = 0;
+				token->child->prev = child;
+			}
 			token->len = location - string;
 			*end = location;
 			return token;
@@ -78,5 +85,4 @@ struct BnfInterp : TokenGen{
 		}
 	}
 
-	bool recursion_fix = false;
 };

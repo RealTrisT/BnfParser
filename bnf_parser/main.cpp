@@ -21,11 +21,6 @@ int main() {
 	
 	BaseBnf a = BaseBnf();
 
-	/*
-		<nibba> ::= <a-or-b> " homes, actually tried to pull one on " <a-or-b> " homes"
-		<a-or-b> ::= "a" | "b" | "A" | "B"
-	*/
-
 	const char* b = R"bnfsyntax(	
 		<rule-name>			::= <letter> <mid-rule-name> | <letter>
 		<mid-rule-name>		::= <rule-char> <mid-rule-name> | <rule-char>
@@ -76,6 +71,7 @@ int main() {
 
 	BnfInterp interp = BnfInterp();
 	auto tkn = interp.GetTokens("hi-this-is-rule-nameNr69", &comp.rules);
+	tkn->remove_recursive();
 
 
 	for (char c = getchar(); c != EOF; c = getchar()) {

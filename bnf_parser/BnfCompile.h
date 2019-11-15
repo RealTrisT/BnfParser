@@ -31,9 +31,10 @@ struct BnfCompile{
 	};
 
 	struct Rule {
-		std::string name;
-		std::vector<Element> elements;
-		std::vector<unsigned> groups;
+		
+		std::string name;              
+		std::vector<Element> elements; 
+		std::vector<unsigned> groups;  
 	};
 
 public:

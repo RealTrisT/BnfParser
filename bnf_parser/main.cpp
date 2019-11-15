@@ -21,14 +21,31 @@ int main() {
 	
 	BaseBnf a = BaseBnf();
 
-	const char* b = R"bnfsyntax(	
-		<rule-name>			::= <letter> <mid-rule-name> | <letter>
-		<mid-rule-name>		::= <rule-char> <mid-rule-name> | <rule-char>
-		<rule-char>			::= <letter> | <digit> | "-"
+	const char* b = R"bnfsyntax(
+		<response>			::= <status-line> <message-headers> <CRLF>
+		<status-line>		::= <http-version> " " <status-code> " " <reason-phrase> <CRLF>
+		<http-version>		::= "HTTP/1.1"
+		<status-code>		::= <digit> <digit> <digit>
+		<reason-phrase>		::= <TEXT>
+
+		<message-headers>	::= <message-header> <CRLF> <message-headers> | <message-header> <CRLF> | ""
+		<message-header>	::= <field-name> ":" <field-value>
+		<field-value>		::= <TEXT> | ""
+		<field-name>		::= <token>
+
+		<TEXT>				::= <TEXT-CHAR> <TEXT> | <TEXT-CHAR>
+		<TEXT-CHAR>			::= <letter> | <digit> | <any-symbol>
+		<any-symbol>		::= <token-symbol> | <separator>
+
+		<token>				::= <token-char> <token> | <token-char>
+		<token-char>		::= <letter> | <digit> | <token-symbol>
+		<token-symbol>		::= "!" | "#" | "$" | "%" | "&" | "'" | "*" | "+" | "-" | "." | "^" | "_" | "`" | "|" | "~"
+
+		<CRLF>				::= <CR> <LF>
 
 		<letter>			::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
 		<digit>				::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-		<symbol>			::= "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" | "," | "-" | "." | "/" | ":" | ";" | ">" | "=" | "<" | "?" | "@" | "[" | "\" | "]" | "^" | "_" | "`" | "{" | "}" | "~"
+		<separator>			::= "(" | ")" | "<" | ">" | "@" | "," | ";" | ":" | '"' | "/" | "[" | "]" | "?" | "=" | "{" | "}" | " " | "	"  | "\"
 	)bnfsyntax";
 
 	TokenGen::Token* t = a.GetTokens(b, 0), *c = t;
@@ -48,8 +65,28 @@ int main() {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	BnfCompile::Rule natives[] = {
-		{"EOF", {{[](const char* s, unsigned* l_o) -> bool {return *l_o = *s == '\0'; }}}, {}},
-		{"EOL", {{[](const char* s, unsigned* l_o) -> bool {return *l_o = *s == '\n'; }}}, {}}
+		{
+			"CR", 
+			{
+				{
+					[](const char* s, unsigned* l_o) -> bool {return *l_o = (*s == '\r'); }
+				}
+			},
+			{
+				1
+			}
+		},
+		{
+			"LF",
+			{
+				{
+					[](const char* s, unsigned* l_o) -> bool {return *l_o = (*s == '\n'); }
+				}
+			},
+			{
+				1
+			}
+		},
 	};
 
 	BnfCompile comp = BnfCompile();
@@ -69,9 +106,22 @@ int main() {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	const char* string =
+		"HTTP/1.1 200 OK\r\n"
+		"Date: Mon, 27 Jul 2009 12 : 28 : 53 GMT\r\n"
+		"Server: Apache / 2.2.14 (Win32)\r\n"
+		"Last-Modified: Wed, 22 Jul 2009 19 : 15 : 56 GMT\r\n"
+		"Content-Length: 88\r\n"
+		"Content-Type: text / html\r\n"
+		"Connection: Closed\r\n"
+		"\r\n"
+	;
+	printf("STRING: %p\n", string);
+
 	BnfInterp interp = BnfInterp();
-	auto tkn = interp.GetTokens("hi-this-is-rule-nameNr69", &comp.rules);
-	tkn->remove_recursive();
+	interp.recursion_fix = true;
+	auto tkn = interp.GetTokens(string, &comp.rules);
+	//tkn->remove_recursive();
 
 
 	for (char c = getchar(); c != EOF; c = getchar()) {

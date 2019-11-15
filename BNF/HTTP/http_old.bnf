@@ -1,0 +1,24 @@
+<response>			::= <status-line> <message-headers> <CRLF>
+<status-line>		::= <http-version> " " <status-code> " " <reason-phrase> <CRLF>
+<http-version>		::= "HTTP/1.1"
+<status-code>		::= <digit> <digit> <digit>
+<reason-phrase>		::= <TEXT>
+
+<message-headers>	::= <message-header> <CRLF> <message-headers> | <message-header> <CRLF> | ""
+<message-header>	::= <field-name> ":" <field-value>
+<field-value>		::= <TEXT> | ""
+<field-name>		::= <token>
+
+<TEXT>				::= <TEXT-CHAR> <TEXT> | <TEXT-CHAR>
+<TEXT-CHAR>			::= <letter> | <digit> | <any-symbol>
+<any-symbol>		::= <token-symbol> | <separator>
+
+<token>				::= <token-char> <token> | <token-char>
+<token-char>		::= <letter> | <digit> | <token-symbol>
+<token-symbol>		::= "!" | "#" | "$" | "%" | "&" | "'" | "*" | "+" | "-" | "." | "^" | "_" | "`" | "|" | "~"
+
+<CRLF>				::= <CR> <LF>
+
+<letter>			::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+<digit>				::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+<separator>			::= "(" | ")" | "<" | ">" | "@" | "," | ";" | ":" | '"' | "/" | "[" | "]" | "?" | "=" | "{" | "}" | " " | "	"  | "\"

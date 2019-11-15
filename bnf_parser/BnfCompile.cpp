@@ -42,7 +42,7 @@ bool BnfCompile::CompileFromTokens(TokenGen::Token* tokens, Rule* natives, unsig
 
 bool BnfCompile::GetRuleIndex(const char* s, unsigned s_len, unsigned* o_index) {
 	for (unsigned i = 0; i < rules.size(); i++) {						//for each rule in our rules vector
-		if (!rules[i].name.compare(0, s_len, s, s_len)) {				//we're gonna compare it to what we have
+		if (!rules[i].name.compare(0, rules[i].name.size(), s, s_len)) {//we're gonna compare it to what we have
 			//printf("true      - %.*s\n", s_len, s);
 			*o_index = i;
 			return true;

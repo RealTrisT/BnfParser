@@ -3,9 +3,13 @@
 #include "TokenGen.h"
 #include "BnfCompile.h"
 
+struct FilterRange {
+	FilterRange(unsigned index_start, unsigned index_end) : index_start(index_start), index_end(index_end) {}
+	FilterRange(unsigned index) : index_start(index), index_end(index+1) {}
+	unsigned index_start, index_end;
+};
+
 struct BnfInterp : TokenGen{
-
-
 
 	Token* GetTokens(const char* s, void* data){
 		rules = (std::vector<BnfCompile::Rule>*)data;
@@ -18,7 +22,10 @@ struct BnfInterp : TokenGen{
 
 
 	std::vector<BnfCompile::Rule>* rules;
+	
 	bool recursion_fix = false;
+	std::vector<FilterRange> plucks;
+	std::vector<FilterRange> purges;
 
 	Token* recurse(unsigned rule_index, Token* parent, const char* string, const char** end) {
 		Token* token = new Token{ 0, 0, parent, 0, string, 0, rule_index };
@@ -27,8 +34,9 @@ struct BnfInterp : TokenGen{
 		const char* location = string;
 		unsigned element_index = 0;
 		unsigned group_index = 0;
-		bool works = true;
+		bool works = false;
 		
+		//printf("recurs [%s] %p\n", rule.name.c_str(), string);
 		while (element_index != rule.groups[group_index]) {
 			BnfCompile::Element& e = rule.elements[element_index];
 			switch (e.type) {
@@ -71,6 +79,7 @@ struct BnfInterp : TokenGen{
 				}
 			}
 		}
+
 		if (works) {
 			if (token->child) {
 				token->child->prev = 0;

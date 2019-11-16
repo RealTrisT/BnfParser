@@ -1,0 +1,45 @@
+<general-header>					::= <cache-control> | <connection> | <date> | <pragma> | <trailer> | <transfer-encoding> | <upgrade> | <via> | <warning>
+
+
+
+
+
+
+<cache-control>						::= "cache-control" ":" <cache-directive-list>
+
+<cache-directive-list>				::= <opt-whitespace> "," <opt-whitespace> <cache-directive> <cache-directive-list> | <opt-whitespace> "," <opt-whitespace> <cache-directive> | <opt-whitespace> <cache-directive> <cache-directive-list>
+<cache-directive> 					::= <cache-request-directive> | <cache-response-directive>
+
+
+<cache-request-directive>			::= "no-cache" | "no-store" | "max-age" "=" <delta-seconds> | "max-stale" <cache-request-max-stale-opt-params> | "min-fresh" "=" delta-seconds | "no-transform" | "only-if-cached" | cache-extension
+<cache-request-max-stale-opt-params>::= "=" delta-seconds | ""
+
+
+<cache-response-directive>			::= "public" | "private" <opt-field-list> | "no-cache" <opt-field-list> | "no-store" | "no-transform" | "must-revalidate" | "proxy-revalidate" | "max-age" "=" delta-seconds | "s-maxage" "=" delta-seconds | cache-extension 
+<opt-field-list>					::= "=" '"' <field-list> '"' | ""
+
+
+<cache-extension> 					::= <token> <cache-extension-opt-params>
+<cache-extension-opt-params>		::= "=" <token> | "=" <quoted-string> | ""
+
+
+
+
+<connection>						::=	"connection" ":" <connection-token-list>
+<connection-token-list>				::= <opt-whitespace> "," <opt-whitespace> <connection-token> <connection-token-list> | <opt-whitespace> "," <opt-whitespace> <connection-token> | <opt-whitespace> <connection-token> <connection-token-list>
+<connection-token>					::= <token>
+
+
+<date>								::= "date" ":" <http-date>
+
+
+<pragma>							::= "pragma" ":" <pragma-directive-list>
+<pragma-directive-list>				::= <opt-whitespace> "," <opt-whitespace> <pragma-directive> <pragma-directive-list> | <opt-whitespace> "," <opt-whitespace> <pragma-directive> | <opt-whitespace> <pragma-directive> <pragma-directive-list>
+<pragma-directive>					::= "no-cache" | <extension-pragma>
+<extension-pragma>					::= <token> "=" <token> | <token> "=" <quoted-string> | <token>
+
+
+<trailer>							::= "trailer" ":" <field-list>
+
+
+<transfer-encoding>					::=
